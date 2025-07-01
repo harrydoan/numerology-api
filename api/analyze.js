@@ -1,5 +1,4 @@
 export default async function handler(req, res) {
-  // CORS setup
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
@@ -22,45 +21,58 @@ export default async function handler(req, res) {
     }
 
     const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
-
     if (!OPENROUTER_API_KEY) {
       return res.status(500).json({ error: 'OpenRouter API key not configured' });
     }
 
-    const prompt = `Phân tích thần số học cho ${field} "${text}" mang con số ${number}. Hãy phân tích chi tiết các đặc điểm, điểm mạnh, bài học, thách thức. Viết ngắn gọn trong 3-4 câu, súc tích nhưng sâu sắc.`;
+    const prompt = `
+Bạn là chuyên gia thần số học với hơn 20 năm kinh nghiệm.
+
+Thông tin:
+- Trường: ${field}
+- Giá trị: "${text}"
+- Con số thần số học: ${number}
+
+Hãy phân tích theo 5 mục:
+1. Giới thiệu về số này
+2. Tính cách và điểm mạnh
+3. Thử thách và bài học
+4. Nội tâm và cảm xúc
+5. Định hướng nghề nghiệp
+
+Viết bằng tiếng Việt, súc tích nhưng sâu sắc (200–300 từ).
+`;
 
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-        'HTTP-Referer': 'https://your-app-domain.com', // thay bằng tên miền thật nếu cần
-        'X-Title': 'Numerology Assistant' // tên app tùy chọn
+        'HTTP-Referer': 'https://your-app-name.vercel.app', // thay bằng tên app bạn nếu cần
       },
       body: JSON.stringify({
-        model: 'anthropic/claude-3-haiku',
+        model: 'openai/gpt-3.5-turbo', // hoặc 'anthropic/claude-3-sonnet' nếu bạn dùng Claude
         messages: [
           {
             role: 'system',
-            content: 'Bạn là chuyên gia thần số học với 20 năm kinh nghiệm. Hãy phân tích sâu sắc nhưng dễ hiểu.'
+            content: 'Bạn là chuyên gia thần số học, hãy trả lời ngắn gọn nhưng truyền cảm hứng.',
           },
           {
             role: 'user',
-            content: prompt
-          }
+            content: prompt,
+          },
         ],
-        temperature: 0.7,
-        max_tokens: 9000
-      })
+        temperature: 0.8,
+        max_tokens: 800,
+      }),
     });
 
     if (!response.ok) {
-      const errText = await response.text();
-      throw new Error(`OpenRouter API error: ${response.status} - ${errText}`);
+      throw new Error(`OpenRouter API error: ${response.status}`);
     }
 
     const data = await response.json();
-    const analysis = data.choices[0].message.content;
+    const analysis = data.choices?.[0]?.message?.content || 'Không thể tạo nội dung.';
 
     return res.status(200).json({ analysis });
 
@@ -68,7 +80,7 @@ export default async function handler(req, res) {
     console.error('Error:', error);
     return res.status(500).json({
       error: 'Internal server error',
-      message: process.env.NODE_ENV === 'development' ? error.message : undefined
+      message: process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
 }
