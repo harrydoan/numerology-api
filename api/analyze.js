@@ -63,7 +63,7 @@ Viết bằng tiếng Việt, súc tích nhưng sâu sắc (200–300 từ).
           },
         ],
         temperature: 0.8,
-        max_tokens: 800,
+        max_tokens: 8000,
       }),
     });
 
