@@ -43,7 +43,7 @@ Hãy phân tích theo 5 mục:
 Viết bằng tiếng Việt, súc tích nhưng sâu sắc (200–300 từ).
 `;
 
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    const response = await fetch('https://numerology-api-bu2r.vercel.app/api/analyze', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
