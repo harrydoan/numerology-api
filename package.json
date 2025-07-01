@@ -1,6 +1,0 @@
-"name": "numerology-api",
-  "version": "1.0.0",
-    "description": "Numerology API with GPT",
-      "engines": {
-          "node": "18.x"
-      }
