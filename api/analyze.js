@@ -31,15 +31,63 @@ export default async function handler(req, res) {
     const createPrompt = (field, number, text) => {
       return `Với vai trò là chuyên gia thần số học có 20 năm kinh nghiệm, hãy phân tích chi tiết cho ${field} "${text}" mang con số ${number}.
 
-Viết 5-7 câu theo cấu trúc:
-1. Giới thiệu về năng lượng và ý nghĩa của con số ${number}
-2. Đặc điểm tính cách nổi bật và cách thể hiện trong cuộc sống
-3. Điểm mạnh và tài năng đặc biệt cần phát huy
-4. Thử thách và bài học quan trọng cần vượt qua
-5. Nội tâm, cảm xúc sâu sắc và nhu cầu tiềm ẩn
-6. Định hướng nghề nghiệp phù hợp với năng lượng này
+Tôi muốn bạn đóng vai một chuyên gia thần số học với hơn 20 năm kinh nghiệm và khả năng diễn giải sâu sắc, rõ ràng, truyền cảm hứng.
+Hãy phân tích toàn diện hồ sơ thần số học của một người dựa trên tên đầy đủ và ngày sinh dưới đây:
 
-Phong cách viết: Chuyên nghiệp, sâu sắc, truyền cảm hứng nhưng dễ hiểu. Tránh quá huyền bí, tập trung vào ứng dụng thực tiễn.`;
+
+---
+
+📛 Họ tên: ${field} 
+📅 Ngày sinh: ${text}
+
+Hãy trình bày các nội dung sau:
+
+1. Tổng quan thần số học cá nhân
+
+Phân tích tổng quát năng lượng bao trùm con người này
+
+Những xu hướng tâm linh, nhân sinh, nghiệp lực nổi bật trong ngày sinh
+
+
+2. Các con số chính và ý nghĩa
+
+✅ Con số Đường đời (Life Path Number) – Phân tích chi tiết mục đích sống, bài học lớn
+
+✅ Con số Linh hồn (Soul Urge / Heart's Desire) – Động lực sâu thẳm, cảm xúc bên trong
+
+✅ Con số Biểu hiện (Expression Number) – Tính cách, tài năng, cách người khác nhìn thấy họ
+
+✅ Con số Nhân cách (Personality Number) – Ấn tượng ban đầu và hành vi xã hội
+
+✅ Con số Ngày sinh (Birthday Number) – Quà tặng bẩm sinh và điểm mạnh tiềm ẩn
+
+✅ Con số Trưởng thành (Maturity Number) – Tầm nhìn dài hạn, giai đoạn sau tuổi 40
+
+✅ Chu kỳ 9 năm và năm cá nhân hiện tại
+
+
+3. Phân tích sâu từng khía cạnh
+
+Với mỗi con số, vui lòng phân tích các yếu tố sau:
+
+Ý nghĩa sâu sắc nhất
+
+Điểm mạnh nổi bật
+
+Thử thách/tổn thương thường gặp
+
+Bài học cần học
+
+Nghề nghiệp/phong cách sống phù hợp
+
+
+4. Thông điệp tổng hợp
+
+Kết nối các con số chính để đưa ra thông điệp tổng thể về hành trình tâm linh, con đường phát triển phù hợp và tiềm năng phát triển cao nhất.
+
+Gợi ý định hướng cuộc sống, chữa lành và phát triển bản thân.
+
+👉 Viết theo văn phong gần gũi, sâu sắc, truyền cảm hứng – có thể dùng ngôi thứ hai (“bạn”) để kết nối trực tiếp với người đọc.`;
     };
     
     // Gọi API cho từng model
