@@ -63,7 +63,14 @@ Phân tích tổng quát năng lượng bao trùm con người này
 Những xu hướng tâm linh, nhân sinh, nghiệp lực nổi bật trong ngày sinh
 
 
-2. Các con số chính và ý nghĩa
+2. Các con số chính và ý nghĩa từng con số, tại sao tính ra số đó
+(Với mỗi con số, vui lòng phân tích sâu các yếu tố sau:
+Ý nghĩa sâu sắc nhất
+Điểm mạnh nổi bật
+Thử thách/tổn thương thường gặp
+Bài học cần học
+Nghề nghiệp/phong cách sống phù hợp
+)
 
 ✅ Con số Đường đời (Life Path Number) – Phân tích chi tiết mục đích sống, bài học lớn
 
@@ -79,23 +86,7 @@ Những xu hướng tâm linh, nhân sinh, nghiệp lực nổi bật trong ngà
 
 ✅ Chu kỳ 9 năm và năm cá nhân hiện tại
 
-
-3. Phân tích sâu từng khía cạnh
-
-Với mỗi con số, vui lòng phân tích các yếu tố sau:
-
-Ý nghĩa sâu sắc nhất
-
-Điểm mạnh nổi bật
-
-Thử thách/tổn thương thường gặp
-
-Bài học cần học
-
-Nghề nghiệp/phong cách sống phù hợp
-
-
-4. Thông điệp tổng hợp
+3. Thông điệp tổng hợp
 
 Kết nối các con số chính để đưa ra thông điệp tổng thể về hành trình tâm linh, con đường phát triển phù hợp và tiềm năng phát triển cao nhất.
 
@@ -137,7 +128,7 @@ Gợi ý định hướng cuộc sống, chữa lành và phát triển bản th
               }
             ],
             temperature: 0.7,
-            max_tokens: 1500 // Tăng lên cho phân tích tổng hợp
+            max_tokens: 9500 // Tăng lên cho phân tích tổng hợp
           })
         });
         
