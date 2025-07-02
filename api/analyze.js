@@ -17,7 +17,7 @@ export default async function handler(req, res) {
   try {
     const { data, models } = req.body;
     
-    if (!data || !models || !Array.isArray(data) || !Array.isArray(models)) {
+    if (!data || !models) {
       return res.status(400).json({ error: 'Invalid request format' });
     }
     
@@ -27,18 +27,32 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'OpenRouter API key not configured' });
     }
     
-    // Tạo prompt cho phân tích thần số học
-    const createPrompt = (field, number, text) => {
-      return `Với vai trò là chuyên gia thần số học có 20 năm kinh nghiệm, hãy phân tích chi tiết cho ${field} "${text}" mang con số ${number}.
-
-Tôi muốn bạn đóng vai một chuyên gia thần số học với hơn 20 năm kinh nghiệm và khả năng diễn giải sâu sắc, rõ ràng, truyền cảm hứng.
+    // Tạo prompt tổng hợp cho tất cả thông tin
+    const createCombinedPrompt = (numerologyData) => {
+      let prompt = `Với vai trò là chuyên gia thần số học có 20 năm kinh nghiệm, hãy phân tích tổng hợp cho người có thông tin sau:\n\n`;
+      
+      if (numerologyData.fullName) {
+        prompt += `- Tên đầy đủ: "${numerologyData.fullName.text}" (Số ${numerologyData.fullName.number})\n`;
+      }
+      if (numerologyData.birthDate) {
+        prompt += `- Ngày sinh: "${numerologyData.birthDate.text}" (Số ${numerologyData.birthDate.number})\n`;
+      }
+      if (numerologyData.licensePlate) {
+        prompt += `- Biển số xe: "${numerologyData.licensePlate.text}" (Số ${numerologyData.licensePlate.number})\n`;
+      }
+      if (numerologyData.phoneNumber) {
+        prompt += `- Số điện thoại: "${numerologyData.phoneNumber.text}" (Số ${numerologyData.phoneNumber.number})\n`;
+      }
+      
+      prompt += `
+\nTôi muốn bạn đóng vai một chuyên gia thần số học với hơn 20 năm kinh nghiệm và khả năng diễn giải sâu sắc, rõ ràng, truyền cảm hứng.
 Hãy phân tích toàn diện hồ sơ thần số học của một người dựa trên tên đầy đủ và ngày sinh dưới đây:
 
 
 ---
 
-📛 Họ tên: ${field} 
-📅 Ngày sinh: ${text}
+📛 Họ tên: Người hỏi
+📅 Ngày sinh: người hỏi
 
 Hãy trình bày các nội dung sau:
 
@@ -87,74 +101,64 @@ Kết nối các con số chính để đưa ra thông điệp tổng thể về
 
 Gợi ý định hướng cuộc sống, chữa lành và phát triển bản thân.
 
+
 👉 Viết theo văn phong gần gũi, sâu sắc, truyền cảm hứng – có thể dùng ngôi thứ hai (“bạn”) để kết nối trực tiếp với người đọc.`;
+      
+      return prompt;
     };
     
     // Gọi API cho từng model
     const modelPromises = models.map(async (modelId) => {
-      const analysisPromises = data.map(async (item) => {
-        const prompt = createPrompt(item.field, item.number, item.text);
+      const prompt = createCombinedPrompt(data);
+      
+      try {
+        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+            'HTTP-Referer': `https://${req.headers.host}`,
+            'Content-Type': 'application/json',
+            'X-Title': 'Numerology Combined Analysis'
+          },
+          body: JSON.stringify({
+            model: modelId,
+            messages: [
+              {
+                role: 'system',
+                content: `Bạn là chuyên gia thần số học với kiến thức sâu rộng về ý nghĩa và sự tương tác giữa các con số. Hãy phân tích tổng hợp một cách toàn diện, kết nối các con số để đưa ra cái nhìn sâu sắc về con người. Phong cách phân tích phụ thuộc vào model:
+                - GPT: Phân tích logic, có cấu trúc, khoa học
+                - Claude: Phân tích sâu sắc về cảm xúc, tâm lý, đồng cảm
+                - Gemini: Phân tích thực tế, dễ hiểu, ứng dụng cao
+                - DeepSeek: Phân tích cân bằng, toàn diện, kết hợp logic và trực giác`
+              },
+              {
+                role: 'user',
+                content: prompt
+              }
+            ],
+            temperature: 0.7,
+            max_tokens: 1500 // Tăng lên cho phân tích tổng hợp
+          })
+        });
         
-        try {
-          const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-              'HTTP-Referer': `https://${req.headers.host}`,
-              'Content-Type': 'application/json',
-              'X-Title': 'Numerology Multi-Model Analysis'
-            },
-            body: JSON.stringify({
-              model: modelId,
-              messages: [
-                {
-                  role: 'system',
-                  content: `Bạn là chuyên gia thần số học với kiến thức sâu rộng. Phong cách phân tích của bạn phụ thuộc vào model:
-                  - GPT: Phân tích logic, có cấu trúc rõ ràng, súc tích
-                  - Claude: Phân tích sâu sắc về mặt cảm xúc, chi tiết và đồng cảm
-                  - Gemini: Phân tích đơn giản, thực tế, dễ hiểu
-                  - DeepSeek: Phân tích toàn diện, cân bằng giữa logic và cảm xúc`
-                },
-                {
-                  role: 'user',
-                  content: prompt
-                }
-              ],
-              temperature: 0.7,
-              max_tokens: 800
-            })
-          });
-          
-          if (!response.ok) {
-            throw new Error(`Model ${modelId} returned ${response.status}`);
-          }
-          
-          const result = await response.json();
-          return {
-            field: item.field,
-            number: item.number,
-            analysis: result.choices[0].message.content,
-            key: item.key
-          };
-          
-        } catch (error) {
-          console.error(`Error with model ${modelId}:`, error);
-          return {
-            field: item.field,
-            number: item.number,
-            analysis: `Không thể phân tích với model này. Lỗi: ${error.message}`,
-            key: item.key,
-            error: true
-          };
+        if (!response.ok) {
+          throw new Error(`Model ${modelId} returned ${response.status}`);
         }
-      });
-      
-      const analyses = await Promise.all(analysisPromises);
-      
-      return {
-        model: modelId,
-        analyses
-      };
+        
+        const result = await response.json();
+        return {
+          model: modelId,
+          analysis: result.choices[0].message.content
+        };
+        
+      } catch (error) {
+        console.error(`Error with model ${modelId}:`, error);
+        return {
+          model: modelId,
+          analysis: `Không thể phân tích với model này. Lỗi: ${error.message}`,
+          error: true
+        };
+      }
     });
     
     const results = await Promise.all(modelPromises);
